@@ -1,16 +1,25 @@
 const express= require("express");
 
 const app=express();
-app.use("/heyy",(req,res)=>{
-    res.send("heyy")
+
+//only one http that is given
+app.get("/user",(req,res)=>{
+    res.send("data accesed")
 })
-app.use("/hello",(req,res)=>{
-    res.send("hello")
+app.post("/user",(req,res)=>{
+    res.send("data posted")
 })
-app.use("/",(req,res)=>{
-    res.send("no extend")
+app.delete("/user",(req,res)=>{
+    res.send("deleted")
 })
 
+app.put("/user",(req,res)=>{
+    res.send("put")
+})
+//this will run for all http request
+app.use("/user",(req,res)=>{
+    res.send("no extend")
+})
 
 
 app.listen("8000",()=>{
