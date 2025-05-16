@@ -1,23 +1,28 @@
 const express = require("express");
 const app=express();
-// Apply auth middleware to /auth routes
-
-app.get("/auth", (req, res) => {
-    //try{
-        throw new Error("wwfefe");
+const connection = require("./config/database");
+const User = require("./model/user");
+app.post("/user",async(req,res)=>{
+    const user=new User({
+       name:"adarsh",
+        email:"ajsjjd@gmail.com",
+    });
+    try{
+        await user.save();
+        res.send("user created");
+    }
+    catch(err){
         
-        res.send("auth xx verify");
-    //}
- //  catch(err){
-  //      res.send("contact support")
-  // }
-});
-
-app.use("/",(err,req,res,next)=>{
-    if(err){
-        res.status(500).send("contact support")
+        res.status(500).send(err);
     }
 })
-app.listen(8000, () => {
-    console.log("port 8000 running");
+
+connection().then(() => {
+    console.log("Database connected");
+    app.listen(8000, () => {
+        console.log("port 8000 running");
+    });
+    
+}).catch((err) => {
+    console.log("Database connection failed", err);
 });

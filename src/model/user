@@ -1,0 +1,25 @@
+const moongose=require("mongoose");
+const userschema=new moongose.Schema({
+    name:{
+        type:String,
+        
+    },
+    email:{
+        type:String,
+       
+    },
+    password:{
+        type:String,
+        
+    },
+    age:{
+        type:Number,
+        
+    },
+    gender:{
+        type:String,
+        
+    }
+});
+const User=moongose.model("user",userschema);
+module.exports=User;
