@@ -49,6 +49,22 @@ app.get("/feed",async(req,res)=>{
             res.status(500).send('Server error: ' + err.message);
         }
     });
+
+    //update
+
+    app.patch('/users', async (req, res) => {
+        const email = req.body.email;
+        const updateData = req.body;
+    
+        try {
+            const user = await User.findOneAndUpdate({email:email},updateData);
+           // console.log(user);
+            res.send("user updated");
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server error: ' + err.message);
+        }
+    });
     
  
 connection().then(() => {
