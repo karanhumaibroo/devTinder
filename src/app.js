@@ -36,7 +36,21 @@ app.get("/feed",async(req,res)=>{
         res.status(500).send(err);
     }   })
 
-
+    //delete  by age
+    app.delete('/users', async (req, res) => {
+        const userId = req.body.userId;
+    
+        try {
+            const user = await User.findByIdAndDelete(userId);
+           
+            res.send("user deleted");
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server error: ' + err.message);
+        }
+    });
+    
+ 
 connection().then(() => {
     console.log("Database connected");
     app.listen(8000, () => {
