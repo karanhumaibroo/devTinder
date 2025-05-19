@@ -58,7 +58,8 @@ app.get("/feed",async(req,res)=>{
     
         try {
             const user = await User.findOneAndUpdate({email:email},updateData);
-           // console.log(user);
+           
+           //  console.log(user);
             res.send("user updated");
         } catch (err) {
             console.error(err);
