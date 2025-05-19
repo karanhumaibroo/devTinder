@@ -52,12 +52,28 @@ app.get("/feed",async(req,res)=>{
 
     //update
 
-    app.patch('/users', async (req, res) => {
-        const email = req.body.email;
+    app.patch('/users/:userId', async (req, res) => {
+        const userId = req.params.userId;
         const updateData = req.body;
     
         try {
-            const user = await User.findOneAndUpdate({email:email},updateData);
+          
+            const AllowedUpdates = ['name', 'password', 'age', 'skills', 'gender'];
+            // Check if all keys in updateData are allowed
+            const updatallow = Object.keys(updateData).every(k => AllowedUpdates.includes(k));
+            // Log the incoming update data for debugging
+           
+            // If not allowed, return a 400 error
+            if (!updatallow) {
+                return res.status(400).send("Can't update: Invalid fields");
+            }
+
+            if(updateData.skills?.length>5){
+                return res.status(400).send("Can't update: skills should be less than 5");
+            }
+
+
+            const user = await User.findByIdAndUpdate(userId,updateData);
            
            //  console.log(user);
             res.send("user updated");
