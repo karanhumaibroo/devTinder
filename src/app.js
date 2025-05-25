@@ -2,87 +2,95 @@ const express = require("express");
 const app=express();
 const connection = require("./config/database");
 const User = require("./model/user");
+const cookieParser=require("cookie-parser");
+const check=require("./utils/validator");
+const jwt=require("jsonwebtoken");
+const { userauth } = require("./middleware/auth");
 app.use( express.json())
-app.post("/signup",async(req,res)=>{
-    const user=new User(req.body);
-   
-    try{
-        await user.save();
-        res.send("user created");
-    }
-    catch(err){
-        
-        res.status(500).send(err);
-    }
-})
-//single user
-app.get("/users",async(req,res)=>{
-    const age=req.body.age;
-    try{
-        const users=await User.find({age:age});
-        res.send(users);
-    }
-    catch(err){
-        res.status(500).send(err);
-    }   })
-//all users
-app.get("/feed",async(req,res)=>{
-    
-    try{
-        const users=await User.find({});
-        res.send(users);
-    }
-    catch(err){
-        res.status(500).send(err);
-    }   })
+app.use(cookieParser());
+const bcrypt = require('bcrypt');
+const e = require("express");
+// Adjust path as needed
 
-    //delete  by age
-    app.delete('/users', async (req, res) => {
-        const userId = req.body.userId;
+
+
+app.post('/signup', async (req, res) => {
+  try {
+    check(req); // Validate input using the check function
+    const { name, email, password } = req.body;
+
+    // Validate input
     
-        try {
-            const user = await User.findByIdAndDelete(userId);
-           
-            res.send("user deleted");
-        } catch (err) {
-            console.error(err);
-            res.status(500).send('Server error: ' + err.message);
-        }
+
+    // Hash the password
+    const passhash = await bcrypt.hash(password, 10);
+    console.log("Hashed password:", passhash);
+
+    // Create user instance
+    const user = new User({
+      name,
+      email,
+      password: passhash,
     });
 
-    //update
+    // Save to database
+    await user.save();
 
-    app.patch('/users/:userId', async (req, res) => {
-        const userId = req.params.userId;
-        const updateData = req.body;
-    
-        try {
-          
-            const AllowedUpdates = ['name', 'password', 'age', 'skills', 'gender'];
-            // Check if all keys in updateData are allowed
-            const updatallow = Object.keys(updateData).every(k => AllowedUpdates.includes(k));
-            // Log the incoming update data for debugging
-           
-            // If not allowed, return a 400 error
-            if (!updatallow) {
-                return res.status(400).send("Can't update: Invalid fields");
-            }
+    res.status(201).send("User  created successfully");
+  } catch (err) {
+    console.error(err);
 
-            if(updateData.skills?.length>5){
-                return res.status(400).send("Can't update: skills should be less than 5");
-            }
+    // Handle duplicate email error (MongoDB duplicate key error)
+    if (err.code === 11000) {
+      return res.status(409).send("Email already exists");
+    }
 
+    res.status(500).send("Server error: " + err.message);
+  }
+});
 
-            const user = await User.findByIdAndUpdate(userId,updateData);
-           
-           //  console.log(user);
-            res.send("user updated");
-        } catch (err) {
-            console.error(err);
-            res.status(500).send('Server error: ' + err.message);
+app.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Find user by email
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(401).send("Invalid email or password");
         }
-    });
-    
+
+        // Compare password with hashed password   
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(isMatch){
+            const token=await jwt.sign({ _id: user._id },"dev#tinder2344",{expiresIn:"1h"});
+            // Set a cookie with the user ID
+            res.cookie('token', token,{expires: new Date(Date.now() + 3600000)});
+            
+            console.log("Cookie set:");
+        }
+      
+        if (!isMatch) {
+            return res.status(401).send("Invalid email or password"); 
+        } else {
+            res.status(200).send("Login successful");
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server error: " + err.message);
+    }
+});
+
+app.get('/profile',userauth, async (req, res) => {
+    try {
+     const user=req.user; // Assuming user is set in a previous middleware
+      res.send(user);
+    } catch (err) {
+      console.error(err);
+      res.status(400).send('Invalid token');
+    }
+  });
+
+
  
 connection().then(() => {
     console.log("Database connected");

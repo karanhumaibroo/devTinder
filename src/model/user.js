@@ -13,19 +13,19 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true,
         lowercase: true,
-        validate(value) {
+       validate(value) {
             if (!validator.isEmail(value)) {
-                throw new Error("email not valid");
-            }
+               throw new Error("email not valid");
+           }
         },
     },
     password: {
         type: String,
         min: 6,
-        validate(value) {
-            if(!validator.isStrongPassword(value)){
+       validate(value) {
+           if(!validator.isStrongPassword(value)){
                 throw new Error("password not strong");
-            }
+           }}
     },
     age: {
         type: Number,
