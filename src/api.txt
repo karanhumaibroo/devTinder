@@ -1,0 +1,17 @@
+#auth
+ post   user/signup
+ post  user/login
+ post  user/logout
+ delete  user/delete
+
+#profile
+ get  user/profile
+ patch user/profileupdate
+ patch user/passupdate
+
+#feed
+  get  user/feed
+  post user/sendconnection
+
+like acc or rej
+req acc or rej
