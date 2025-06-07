@@ -1,9 +1,10 @@
 const express=require("express");
 const authrouter=express.Router();
-const check=require("../utils/validator");
+const {check}=require("../utils/validator");
 const User = require("../model/user");
+const cookieParser=require("cookie-parser");
 const bcrypt = require('bcrypt');
-
+authrouter.use(cookieParser());
 authrouter.post('/signup', async (req, res) => {
   try {
     check(req); // Validate input using the check function
@@ -69,5 +70,16 @@ authrouter.post("/login", async (req, res) => {
         res.status(500).send("Server error: " + err.message);
     }
 });
+
+authrouter.post("/logout", async (req, res) => {
+    try {
+        // Clear the cookie by setting its expiration date to the past
+        res.cookie('token', null, { expires: new Date(0) });
+        res.status(200).send("Logout successful");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server error: " + err.message);
+    }
+})
 
 module.exports=authrouter;

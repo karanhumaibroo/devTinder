@@ -19,5 +19,13 @@ const check = (req) => {
     throw new Error("Password not strong");
   }
 };
+const checkEdit = (req) => {
+  const userupdate=["name", "email", "about","age","gender","photourl","skills",];
+  const keys = Object.keys(req.body).every((fields) => {
+  return  userupdate.includes(fields);
+    
+  })
+ return keys;
+}
 
-module.exports = check;
+module.exports = {check,checkEdit};

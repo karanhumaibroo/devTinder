@@ -15,3 +15,6 @@
 
 like acc or rej
 req acc or rej
+
+reques/send/status/touserid
+reques/send/status/reqid
