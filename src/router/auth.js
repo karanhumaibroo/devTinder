@@ -63,7 +63,7 @@ authrouter.post("/login", async (req, res) => {
         if (!isMatch) {
             return res.status(401).send("Invalid email or password"); 
         } else {
-            res.status(200).send("Login successful");
+            res.status(200).send(user);
         }
     } catch (err) {
         console.error(err);
