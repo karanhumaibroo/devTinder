@@ -4,7 +4,7 @@ const { userauth } = require("../middleware/auth");
 const coonectionreq = require("../model/connection");
 const User = require("../model/user");
 const { connection } = require("mongoose");
-const INFO_NEED="name age gender about";
+const INFO_NEED="name age gender about photourl skills";
 Userrouter.get("/user/request", userauth, async (req, res) => {
     try {
         const userId = req.user._id;
@@ -37,7 +37,7 @@ Userrouter.get("/user/connection", userauth, async (req, res) => {
         res.status(400).send("Error fetching connections: " + err.message);
     }})
 
-Userrouter.get("/user/feed", userauth, async (req, res) => {
+Userrouter.get("/feed", userauth, async (req, res) => {
  try{
  
     const user=req.user;

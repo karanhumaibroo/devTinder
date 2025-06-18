@@ -25,9 +25,15 @@ authrouter.post('/signup', async (req, res) => {
     });
 
     // Save to database
-    await user.save();
+    const saveduser=await user.save();
+     const token=await saveduser.getjwt();
+            // Set a cookie with the user ID
+            res.cookie('token', token,{expires: new Date(Date.now() + 3600000)});
 
-    res.status(201).send("User  created successfully");
+    res.status(201).json({
+      message: "User created successfully",
+      user: saveduser,
+    });
   } catch (err) {
     console.error(err);
 

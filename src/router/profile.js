@@ -28,7 +28,10 @@ profilerouter.patch('/profile/update',userauth, async (req, res) => {
     user[key] = req.body[key];
   });
   await user.save();
-  res.status(200).send('Profile updated successfully');
+  res.json({
+    message: 'Profile updated successfully',
+    user: user
+  });
   }
   catch(err){
     console.error(err);
