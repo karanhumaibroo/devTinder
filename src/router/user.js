@@ -22,7 +22,7 @@ Userrouter.get("/user/request", userauth, async (req, res) => {
 Userrouter.get("/user/connection", userauth, async (req, res) => {
     try {
         const userId = req.user._id;
-        const connections = await coonectionreq.find({ $or: [{ fromUserid: userId }, { toUserid: userId }] }).populate("fromUserid", INFO_NEED).populate("toUserid", INFO_NEED);
+        const connections = await coonectionreq.find({ $or: [{ fromUserid: userId,status:"accepted" }, { toUserid: userId ,status:"accepted"}] }).populate("fromUserid", INFO_NEED).populate("toUserid", INFO_NEED);
         const data= connections.map((row)=>{
             if(row.fromUserid._id.toString()===userId.toString()){
              return row.toUserid
