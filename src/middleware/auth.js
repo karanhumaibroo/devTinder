@@ -8,7 +8,7 @@ const userauth = async(req, res, next) => {
         return res.status(401).send('Access denied. No token provided.');
       }
       // Verify token
-      const decoded = jwt.verify(token, 'dev#tinder2344');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       // Find user by ID from token
       const user = await User.findById(decoded._id).select('-password'); // exclude password field
       if (!user) {

@@ -22,11 +22,12 @@ app.use("/", authrouter);
 app.use("/", profilerouter);
 app.use("/", Reqrouter);
 app.use("/",Userrouter);
+require("dotenv").config();
  
 connection().then(() => {
     console.log("Database connected");
-    app.listen(8000, () => {
-        console.log("port 8000 running");
+    app.listen(process.env.PORT, () => {
+        console.log("port " + process.env.PORT + " running");
     });
     
 }).catch((err) => {
